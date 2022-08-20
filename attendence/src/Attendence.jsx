@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import attendence from "./attendence.json";
 
 const Attendence = () => {
@@ -10,11 +10,17 @@ const Attendence = () => {
     calculateSalary();
   }, []);
 
+  const [totalBonus, setTotalBonus] = useState(0);
+  const [basicSalary, setBasicSalary] = useState(0);
+  const [totalOverTimesalary, setTotalOverTimesalary] = useState(0);
+
+  const [totalSalary, setTotalSalary] = useState(0);
+
   let femaleEmpTotalSalary = 0;
   let maleEmpTotalSalary = 0;
   let bonus = 0;
-  let basicSalary = 0;
-  let totalOverTimesalary = 0;
+  let basicSal = 0;
+  let totOverTimesalary = 0;
 
   const calculateTotalSalaryByGender = (gender, value) => {
     if (gender == "Male") {
@@ -28,8 +34,8 @@ const Attendence = () => {
     femaleEmpTotalSalary = 0;
     maleEmpTotalSalary = 0;
     bonus = 0;
-    basicSalary = 0;
-    totalOverTimesalary = 0;
+    basicSal = 0;
+    totOverTimesalary = 0;
 
     const selectedMonthAttendenceList = attedenceList.filter(
       (x) =>
@@ -50,7 +56,7 @@ const Attendence = () => {
         grpEmployeesById[empId].forEach((emp) => {
           if (emp.designation != "Worker") {
             if (emp.total_hours >= 8 && emp.weekday > 1 && emp.weekday < 7) {
-              basicSalary = basicSalary + emp.per_day_salary;
+              basicSal = basicSal + emp.per_day_salary;
               calculateTotalSalaryByGender(emp.gender, emp.per_day_salary);
             } else if (
               emp.total_hours >= 4 &&
@@ -58,7 +64,7 @@ const Attendence = () => {
               emp.weekday > 1 &&
               emp.weekday < 7
             ) {
-              basicSalary = basicSalary + emp.per_day_salary / 2;
+              basicSal = basicSal + emp.per_day_salary / 2;
               calculateTotalSalaryByGender(emp.gender, emp.per_day_salary / 2);
             }
           } else if (emp.designation == "Worker") {
@@ -67,7 +73,7 @@ const Attendence = () => {
             let overtimeSalary = 0;
 
             if (emp.total_hours >= 8 && emp.weekday > 1 && emp.weekday < 7) {
-              basicSalary = basicSalary + emp.per_day_salary;
+              basicSal = basicSal + emp.per_day_salary;
               if (emp.total_hours > 8) {
                 overtimeSalary = 2 * (extraHrs * perHrSalary);
                 calculateTotalSalaryByGender(
@@ -83,13 +89,13 @@ const Attendence = () => {
               emp.weekday > 1 &&
               emp.weekday < 7
             ) {
-              basicSalary = basicSalary + emp.per_day_salary / 2;
+              basicSal = basicSal + emp.per_day_salary / 2;
               calculateTotalSalaryByGender(emp.gender, emp.per_day_salary / 2);
             } else if (emp.weekday == 1 || emp.weekday == 7) {
               overtimeSalary = 2 * (perHrSalary * emp.total_hours);
               calculateTotalSalaryByGender(emp.gender, overtimeSalary);
             }
-            totalOverTimesalary = totalOverTimesalary + overtimeSalary;
+            totOverTimesalary = totOverTimesalary + overtimeSalary;
           }
         });
       });
@@ -100,16 +106,48 @@ const Attendence = () => {
         bonus = femaleEmpTotalSalary * 0.01;
       }
 
-      console.log("basicSalary-->", basicSalary);
-      console.log("overtime-->2213586.88", totalOverTimesalary);
-      console.log("femaleEmpTotalSalary-->", femaleEmpTotalSalary);
-      console.log("maleEmpTotalSalary-->", maleEmpTotalSalary);
-      console.log("bonus-->", bonus);
+      setBasicSalary(basicSal.toFixed(2));
+      setTotalOverTimesalary(totOverTimesalary.toFixed(2));
+      setTotalBonus(bonus.toFixed(2));
+
+      const totSalary = [basicSal, bonus, totOverTimesalary].reduce(
+        (prev, curr) => prev + curr,
+        0
+      );
+      setTotalSalary(totSalary);
     }
   };
 
-  return <>
-  </>;
+  return (
+    <>
+      <table>
+        <tr>
+          <td>Basic Salary</td>
+          <td>{basicSalary}</td>
+        </tr>
+        <tr>
+          <td>Overtime</td>
+          <td>{totalOverTimesalary}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Bonus</td>
+          <td>{totalBonus}</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Total Salary</td>
+          <td>{totalSalary}</td>
+        </tr>
+      </table>
+    </>
+  );
 };
 
 export default Attendence;
