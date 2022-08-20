@@ -7,7 +7,7 @@ const Attendence = () => {
   });
 
   useEffect(() => {
-    calculateSalary("Feb", "2020");
+    calculateSalary();
   }, []);
 
   let femaleEmpTotalSalary = 0;
@@ -24,7 +24,7 @@ const Attendence = () => {
     }
   };
 
-  const calculateSalary = (month, year) => {
+  const calculateSalary = () => {
     femaleEmpTotalSalary = 0;
     maleEmpTotalSalary = 0;
     bonus = 0;
@@ -108,7 +108,8 @@ const Attendence = () => {
     }
   };
 
-  return <></>;
+  return <>
+  </>;
 };
 
 export default Attendence;
